@@ -1,15 +1,13 @@
-def print_letter(letter):
-    print(letter, end='')
-
-
-print_letter('8')
-print_letter('8')
-print_letter('0')
-print_letter('0')
-print_letter('5')
-print_letter('5')
-print_letter('5')
-print_letter('3')
-print_letter('5')
-print_letter('3')
-print_letter('5')
+def test(num):
+    print(num, end = "")
+test(8)
+test(8)
+test(0)
+test(0)
+test(5)
+test(5)
+test(5)
+test(3)
+test(5)
+test(3)
+test(5)   
