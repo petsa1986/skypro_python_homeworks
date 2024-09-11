@@ -1,0 +1,2 @@
+В классе StringUtils есть неточности:
+В методе capitilize ошибка в написании слова (capitalize).
