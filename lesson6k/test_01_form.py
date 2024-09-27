@@ -1,33 +1,41 @@
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from configuration import *
-from time import sleep
 
-def test_data_types_form (chrome_browser):
-    chrome_browser.get(URL_1)
-    chrome_browser.find_element(By.NAME, "first-name").send_keys(first_name)
-    chrome_browser.find_element(By.NAME, "last-name").send_keys(last_name)
-    chrome_browser.find_element(By.NAME, "address").send_keys(address)
-    chrome_browser.find_element(By.NAME, "e-mail").send_keys(email)
-    chrome_browser.find_element(By.NAME, "phone").send_keys(phone_number)
-    chrome_browser.find_element(By.NAME, "zip-code").send_keys(zip_code)
-    chrome_browser.find_element(By.NAME, "city").send_keys(city)
-    chrome_browser.find_element(By.NAME, "country").send_keys (country)
-    chrome_browser.find_element(By.NAME, "job-position").send_keys(job_position)
-    chrome_browser.find_element(By.NAME, "company").send_keys(company)
-    sleep (5)
-    WebDriverWait(chrome_browser,  40, 0.2).until(
-        EC. element_to_be_clickable ((By.TAG_NAME, "button"))).click()
-    sleep (2)
 
-    assert "danger" in chrome_browser.find_element(By.ID, "zip-code").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "first-name").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "last-name").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "address").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "e-mail").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "phone").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "city").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "country").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "job-position").get_attribute("class")
-    assert "success" in chrome_browser.find_element(By.ID, "company").get_attribute("class")
+from webdriver_manager.chrome import ChromeDriverManager
+driver = webdriver.Chrome(service=ChromeService
+                          (ChromeDriverManager().install()))
+
+
+def test_form_elements():
+    driver.get("https://bonigarcia.dev/selenium-webdriver-java/data-types.html")
+    driver.implicitly_wait(4)
+    driver.maximize_window()
+
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "first-name"]').send_keys("Иван")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "last-name"]').send_keys("Петров")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "address"]').send_keys("Ленина, 55-3")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "e-mail"]').send_keys("test@skypro.com")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "phone"]').send_keys("+7985899998787")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "zip-code"]').clear()
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "city"]').send_keys("Москва")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "country"]').send_keys("Россия")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "job-position"]').send_keys("QA")
+    driver.find_element(By.CSS_SELECTOR, 'input[name = "company"]').send_keys("SkyPro")
+
+    button = driver.find_element(By.CSS_SELECTOR, 'button.btn')
+    ActionChains(driver).move_to_element(button).perform()
+    button.click()
+
+    zip_code_color = driver.find_element(By.CSS_SELECTOR, "#zip-code").value_of_css_property("background-color")
+    assert zip_code_color == 'rgba(248, 215, 218, 1)'
+
+    other_fields = ["#first-name", "#last-name", "#address", "#e-mail",
+                    "#phone", "#city", "#country", "#job-position", "#company"]
+    for field in other_fields:
+        field_color = driver.find_element(By.CSS_SELECTOR, field).value_of_css_property("background-color")
+    assert field_color == 'rgba(209, 231, 221, 1)'
+
+    driver.quit()
